@@ -23,7 +23,9 @@
             android:label="@string/title_activity_main_screen"
             android:theme="@style/AppTheme" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".Sign_in_activity"></activity>
+        <activity android:name=".UserManagementActivity" />
+        <activity android:name=".AddEventAct" />
+        <activity android:name=".LogbookEvents"></activity>
     </application>
 
 </manifest>

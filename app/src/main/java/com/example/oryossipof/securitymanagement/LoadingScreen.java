@@ -68,7 +68,7 @@ private ProgressBar progress;
                     }
                 }
 
-                Intent intent = new Intent(LoadingScreen.this, Sign_in_activity.class);
+                Intent intent = new Intent(LoadingScreen.this, LoginActivity.class);
                 startActivity(intent);
                 finish();   //finish this so when come back after that exit app
 

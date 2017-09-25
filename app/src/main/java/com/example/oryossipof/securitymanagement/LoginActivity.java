@@ -1,6 +1,7 @@
 package com.example.oryossipof.securitymanagement;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.icu.util.Freezable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,96 +12,140 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
-    private static final String TAG = "SignupActivity";
+    private static final String TAG = "LoginActivity";
 
-    private EditText _nameText ;
-    private Button _signupButton ;
-    private Firebase myRef;
+    private EditText nameText ;
+    private Button loginButton ;
+    private  Firebase myRef;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_login);
-         _nameText = (EditText) findViewById(R.id.input_name);
-        _signupButton = (Button) findViewById(R.id.btn_signup);
+        Firebase.setAndroidContext(LoginActivity.this);
 
-        myRef = new Firebase("https://securitymanagement-8dd8d.firebaseio.com/");
-        _signupButton.setOnClickListener(new View.OnClickListener() {
+        //this.myRef = new Firebase("https://securitymanagment-2427a.firebaseio.com/");
+        this.myRef = new Firebase("https://securitymanagement-8dd8d.firebaseio.com/");
+
+
+        nameText = (EditText) findViewById(R.id.input_name);
+        loginButton =  (Button) findViewById(R.id.btn_login);
+
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                signup();
+            public void onClick(View view) {
+                login();
             }
         });
-
-
     }
 
-    public void signup() {
-        Log.d(TAG, "Signup");
-
+    private void login() {
 
         if (!validate()) {
-            onSignupFailed();
+            onLoginFailed();
             return;
         }
 
-        _signupButton.setEnabled(false);
 
-
-        String name = _nameText.getText().toString();
-
-
-
-
-        // TODO: Implement your own signup logic here.
-
-
+        String name = nameText.getText().toString();
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
                         // On complete call either onSignupSuccess or onSignupFailed
                         // depending on success
-                        onSignupSuccess();
-                        // onSignupFailed();
+                        onLoginSuccess();
 
                     }
-                }, 3000);
+                }, 1000);
     }
 
 
-    public void onSignupSuccess() {
-        _signupButton.setEnabled(true);
-        Firebase mRefChild = myRef.child("Name");
-        mRefChild.setValue(_nameText.getText()+"");
-        setResult(RESULT_OK, null);
-        Toast.makeText(getBaseContext(), "Sign in Succeed", Toast.LENGTH_LONG).show();
+    public void onLoginSuccess() {
 
-        //  finish();
+  //      DataBase.signupUser(na.getText().toString(),nameText.getText().toString());
+
+
+        /* if (DataBase.loginUser(nameText.getText().toString())){
+            setResult(RESULT_OK, null);
+            Toast.makeText(getBaseContext(), "Hello " + nameText.getText() + "!", Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            onLoginFailed();
+        }*/
+
+        String userID = nameText.getText().toString();
+        Query query = myRef.child("Users").child(userID);
+
+
+
+        query.addListenerForSingleValueEvent(new com.firebase.client.ValueEventListener() {
+            @Override
+            public void onDataChange(com.firebase.client.DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())  //there is a match
+                {
+                        String name = "";
+
+                    for (com.firebase.client.DataSnapshot  d :dataSnapshot.getChildren()) {
+                       name =  d.getValue().toString();  //retrieve the name of the man
+                        break;
+                    }
+
+                    Toast.makeText(getBaseContext(), "Hello " + name, Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
+                    startActivity(intent);
+                    finish();   //close this activity
+
+                }
+                else
+                {
+                    onLoginFailed();   //Didnt find any person
+                }
+
+
+            }
+
+
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
     }
 
-    public void onSignupFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+    public void onLoginFailed() {
+        Toast.makeText(getBaseContext(), "Wrong ID", Toast.LENGTH_LONG).show();
 
-        _signupButton.setEnabled(true);
+
     }
 
     public boolean validate() {
         boolean valid = true;
 
-        String name = _nameText.getText().toString();
+        String id = nameText.getText().toString();
 
-        if (name.isEmpty() || name.length() < 6) {
-            _nameText.setError("at least 6 characters");
+         if(id.isEmpty() || id.length()!=9) {
+            nameText.setError("ID must contain 9 characters!");
             valid = false;
-        } else {
-            _nameText.setError(null);
+        }
+        else {
+             nameText.setError(null);
         }
 
         return valid;
     }
+
+
 }
+
+
 
