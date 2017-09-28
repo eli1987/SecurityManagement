@@ -1,6 +1,7 @@
 package com.example.oryossipof.securitymanagement;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -51,10 +52,12 @@ class DataBase {
     }
 
 
-    public static void addEventToDataBase(String dateandTime, String str, String currentDateandTime) {
+    public static void addEventToDataBase(String dateandTime, String str, String currentDateandTime, String hh_mm, String donwloadImage) {
         Firebase mRefChild = myRef.child("Events");
         mRefChild.push();
-        mRefChild.child(dateandTime+"").setValue(currentDateandTime + ":"+ str);
-
+        mRefChild.child(dateandTime).child(hh_mm).child("username").setValue("Eli");
+        mRefChild.child(dateandTime).child(hh_mm).child("time").setValue(dateandTime);
+        mRefChild.child(dateandTime).child(hh_mm).child("dis").setValue(str);
+        mRefChild.child(dateandTime).child(hh_mm).child("urlImage").setValue(donwloadImage);
     }
 }

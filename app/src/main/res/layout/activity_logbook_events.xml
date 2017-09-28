@@ -20,13 +20,20 @@
     <ListView
         android:id="@+id/lv_msglist"
         android:layout_width="match_parent"
-        android:layout_height="375dp"
+        android:layout_height="163dp"
         android:dividerHeight="1dp"
         android:layoutDirection="ltr"
         android:layout_marginTop="30dp"
 
         />
     >
+
+    <ImageView
+        android:id="@+id/imageUpload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/bg" />
+
     <TextView
         android:id="@+id/emptyElement"
         android:layout_width="wrap_content"
